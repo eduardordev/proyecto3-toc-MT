@@ -1,0 +1,79 @@
+q_states:
+  q_list:
+    - q0
+    - q1
+    - q2
+    - q3
+    - q_accept
+    - q_reject
+  initial: q0
+  final: q_accept
+
+alphabet:
+  - 'a'
+  - 'b'
+
+tape_alphabet:
+  - 'a'
+  - 'b'
+  - ''
+
+delta:
+  # Transición desde q0 con 'a'
+  - params:
+      initial_state: q0
+      mem_cache_value: ''
+      tape_input: 'a'
+    output:
+      final_state: q1
+      mem_cache_value: ''
+      tape_output: 'a'
+      tape_displacement: 'R'
+  # Transición desde q1 con 'b'
+  - params:
+      initial_state: q1
+      mem_cache_value: ''
+      tape_input: 'b'
+    output:
+      final_state: q2
+      mem_cache_value: ''
+      tape_output: 'b'
+      tape_displacement: 'R'
+  # Transición desde q2 con 'b'
+  - params:
+      initial_state: q2
+      mem_cache_value: ''
+      tape_input: 'b'
+    output:
+      final_state: q2
+      mem_cache_value: ''
+      tape_output: 'b'
+      tape_displacement: 'R'
+  # Transición desde q2 con 'a'
+  - params:
+      initial_state: q2
+      mem_cache_value: ''
+      tape_input: 'a'
+    output:
+      final_state: q3
+      mem_cache_value: ''
+      tape_output: 'a'
+      tape_displacement: 'R'
+  # Transición desde q3 con símbolo en blanco (fin de cinta)
+  - params:
+      initial_state: q3
+      mem_cache_value: ''
+      tape_input: ''
+    output:
+      final_state: q_accept
+      mem_cache_value: ''
+      tape_output: ''
+      tape_displacement: 'S'
+
+simulation_strings:
+  - 'abbba'
+  - 'abbbba'
+  - 'aaba'
+  - 'abba'
+  - 'aabcaa'
+  - 'abbbaa'

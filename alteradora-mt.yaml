@@ -1,0 +1,56 @@
+q_states:
+  q_list:
+    - q0
+    - q_accept
+    - q_reject
+  initial: q0
+  final: q_accept
+
+alphabet:
+  - 'a'
+  - 'b'
+
+tape_alphabet:
+  - 'a'
+  - 'b'
+  - '0'
+  - '1'
+  - ''
+
+delta:
+  # Transición para cambiar 'a' por '1'
+  - params:
+      initial_state: q0
+      mem_cache_value: ''
+      tape_input: 'a'
+    output:
+      final_state: q0
+      mem_cache_value: ''
+      tape_output: '1'
+      tape_displacement: 'R'
+  # Transición para cambiar 'b' por '0'
+  - params:
+      initial_state: q0
+      mem_cache_value: ''
+      tape_input: 'b'
+    output:
+      final_state: q0
+      mem_cache_value: ''
+      tape_output: '0'
+      tape_displacement: 'R'
+  # Transición para símbolo en blanco (fin de cinta)
+  - params:
+      initial_state: q0
+      mem_cache_value: ''
+      tape_input: ''
+    output:
+      final_state: q_accept
+      mem_cache_value: ''
+      tape_output: ''
+      tape_displacement: 'S'
+
+simulation_strings:
+  - 'aabba'
+  - 'abbab'
+  - 'baaab'
+  - 'bbaaa'
