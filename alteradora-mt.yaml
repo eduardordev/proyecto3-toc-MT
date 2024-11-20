@@ -1,41 +1,56 @@
+# Máquina de Turing para mover todas las 'a's a la izquierda y todas las 'b's a la derecha
 q_states:
   q_list:
-    - q0
-    - q_accept
-    - q_reject
+    - q0       # Estado inicial, fase de escaneo de la cinta
+    - q1       # Estado al encontrar una 'b', almacena 'b' en mem_cache_value
+    - q2       # Estado para buscar una 'a' hacia la derecha para intercambiar
+    - q3       # Estado de intercambio y regreso al inicio
+    - q4       # Estado para restaurar 'b' si no se encuentra una 'a'
+    - q_accept # Estado de aceptación final
   initial: q0
-  final: q_accept
+  final: [q_accept]
 
 alphabet:
-  - 'a'
-  - 'b'
+  - a          # Símbolo 'a' del alfabeto de entrada
+  - b          # Símbolo 'b' del alfabeto de entrada
 
 tape_alphabet:
-  - 'a'
-  - 'b'
-  - '0'
-  - '1'
-  - ''
-
+  - a          # Símbolo 'a' en la cinta
+  - b          # Símbolo 'b' en la cinta
+  - X          # Marcador para 'b's procesadas
+  -            # Símbolo en blanco
 delta:
+  # q0: Fase de escaneo inicial
   - params:
       initial_state: q0
       mem_cache_value: ''
-      tape_input: 'a'
+      tape_input: a
     output:
       final_state: q0
       mem_cache_value: ''
-      tape_output: '1'
-      tape_displacement: 'R'
+      tape_output: a
+      tape_displacement: R        # Mover a la derecha, continuar escaneando
+
   - params:
       initial_state: q0
       mem_cache_value: ''
-      tape_input: 'b'
+      tape_input: b
+    output:
+      final_state: q1
+      mem_cache_value: b          # Almacenar 'b' en mem_cache_value
+      tape_output: X              # Marcar la 'b' como procesada con 'X'
+      tape_displacement: R        # Mover a la derecha para buscar 'a' para intercambiar
+
+  - params:
+      initial_state: q0
+      mem_cache_value: ''
+      tape_input: X
     output:
       final_state: q0
       mem_cache_value: ''
-      tape_output: '0'
-      tape_displacement: 'R'
+      tape_output: X
+      tape_displacement: R        # Continuar escaneando hacia la derecha
+
   - params:
       initial_state: q0
       mem_cache_value: ''
@@ -44,10 +59,164 @@ delta:
       final_state: q_accept
       mem_cache_value: ''
       tape_output: ''
-      tape_displacement: 'S'
+      tape_displacement: S        # Si se llega al final de la cinta, aceptar
+
+  # q1: Encontró 'b', buscando una 'a' para intercambiar
+  - params:
+      initial_state: q1
+      mem_cache_value: b
+      tape_input: a
+    output:
+      final_state: q2
+      mem_cache_value: b
+      tape_output: b              # Intercambiar 'a' con 'b' en la cinta
+      tape_displacement: L        # Mover a la izquierda para regresar al 'X'
+
+  - params:
+      initial_state: q1
+      mem_cache_value: b
+      tape_input: b
+    output:
+      final_state: q1
+      mem_cache_value: b
+      tape_output: b
+      tape_displacement: R        # Continuar buscando una 'a' hacia la derecha
+
+  - params:
+      initial_state: q1
+      mem_cache_value: b
+      tape_input: X
+    output:
+      final_state: q1
+      mem_cache_value: b
+      tape_output: X
+      tape_displacement: R        # Saltar 'X's y seguir buscando
+
+  - params:
+      initial_state: q1
+      mem_cache_value: b
+      tape_input: ''
+    output:
+      final_state: q4
+      mem_cache_value: b
+      tape_output: ''
+      tape_displacement: L        # Si no hay más símbolos, pasar a q4 para restaurar 'b'
+
+  # q2: Fase de intercambio y regreso al 'X' para escribir 'a'
+  - params:
+      initial_state: q2
+      mem_cache_value: b
+      tape_input: a
+    output:
+      final_state: q2
+      mem_cache_value: b
+      tape_output: b              # Continuar moviendo a la izquierda
+      tape_displacement: L
+
+  - params:
+      initial_state: q2
+      mem_cache_value: b
+      tape_input: b
+    output:
+      final_state: q2
+      mem_cache_value: b
+      tape_output: b
+      tape_displacement: L        # Continuar moviendo a la izquierda
+
+  - params:
+      initial_state: q2
+      mem_cache_value: b
+      tape_input: X
+    output:
+      final_state: q3
+      mem_cache_value: ''
+      tape_output: a              # Escribir 'a' sobre el 'X' marcado anteriormente
+      tape_displacement: R        # Prepararse para regresar al inicio
+
+  - params:
+      initial_state: q2
+      mem_cache_value: b
+      tape_input: ''
+    output:
+      final_state: q2
+      mem_cache_value: b
+      tape_output: ''
+      tape_displacement: L        # Continuar moviendo a la izquierda si se encuentra un espacio en blanco
+
+  # q3: Regresar al inicio de la cinta
+  - params:
+      initial_state: q3
+      mem_cache_value: ''
+      tape_input: a
+    output:
+      final_state: q3
+      mem_cache_value: ''
+      tape_output: a
+      tape_displacement: L        # Mover a la izquierda
+
+  - params:
+      initial_state: q3
+      mem_cache_value: ''
+      tape_input: b
+    output:
+      final_state: q3
+      mem_cache_value: ''
+      tape_output: b
+      tape_displacement: L        # Mover a la izquierda
+
+  - params:
+      initial_state: q3
+      mem_cache_value: ''
+      tape_input: ''
+    output:
+      final_state: q0
+      mem_cache_value: ''
+      tape_output: ''
+      tape_displacement: R        # Una vez en el extremo izquierdo, volver a q0
+
+  # q4: No se encontró 'a' para intercambiar, restaurar 'b' y aceptar
+  - params:
+      initial_state: q4
+      mem_cache_value: b
+      tape_input: a
+    output:
+      final_state: q4
+      mem_cache_value: b
+      tape_output: a
+      tape_displacement: L        # Mover a la izquierda
+
+  - params:
+      initial_state: q4
+      mem_cache_value: b
+      tape_input: b
+    output:
+      final_state: q4
+      mem_cache_value: b
+      tape_output: b
+      tape_displacement: L        # Mover a la izquierda
+
+  - params:
+      initial_state: q4
+      mem_cache_value: b
+      tape_input: X
+    output:
+      final_state: q_accept
+      mem_cache_value: ''
+      tape_output: b              # Restaurar 'b' sobre el 'X'
+      tape_displacement: R        # Aceptar la cadena
+
+  - params:
+      initial_state: q4
+      mem_cache_value: b
+      tape_input: ''
+    output:
+      final_state: q4
+      mem_cache_value: b
+      tape_output: ''
+      tape_displacement: L        # Continuar moviendo a la izquierda si se encuentra un espacio en blanco
 
 simulation_strings:
-  - 'aabbaaabba'
-  - 'abbaaabbab'
-  - 'baabbaaaab'
-  - 'bbabaaabaa'
+  - abaaba
+  - bababbabab
+  - abaabaaba
+  - bababababa
