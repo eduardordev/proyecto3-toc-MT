@@ -1,34 +1,36 @@
+# Máquina de Turing para reconocer cadenas espejo abbbba pares
 q_states:
   q_list:
-    - q_start
-    - q_check
-    - q_right
-    - q_left
-    - q_accept
-    - q_reject
+    - q_start    # Estado inicial donde comienza el procesamiento
+    - q_check    # Estado para mover a la izquierda y buscar el siguiente símbolo sin marcar
+    - q_right    # Estado para mover a la derecha hasta el final de la cadena
+    - q_left     # Estado para comparar símbolos y moverse hacia la izquierda
+    - q_accept   # Estado de aceptación
+    - q_reject   # Estado de rechazo
   initial: q_start
   final: [q_accept]
 
 alphabet:
-  - a
-  - b
+  - a            # Símbolo 'a' del alfabeto de entrada
+  - b            # Símbolo 'b' del alfabeto de entrada
 
 tape_alphabet:
-  - a
-  - b
-  - X
-  -
+  - a            # Símbolo 'a' del alfabeto de la cinta
+  - b            # Símbolo 'b' del alfabeto de la cinta
+  - X            # Marca utilizada para indicar símbolos procesados
+  -              # Símbolo en blanco (espacio vacío)
 
 delta:
+  # Desde q_start, leer el primer símbolo y almacenarlo en mem_cache, marcarlo como 'X', mover a la derecha
   - params:
       initial_state: q_start
       mem_cache_value:
       tape_input: a
     output:
       final_state: q_right
-      mem_cache_value: a
-      tape_output: X
-      tape_displacement: R
+      mem_cache_value: a          # Almacena 'a' en mem_cache
+      tape_output: X              # Marca el símbolo como procesado
+      tape_displacement: R        # Mueve el cabezal a la derecha
 
   - params:
       initial_state: q_start
@@ -36,10 +38,11 @@ delta:
       tape_input: b
     output:
       final_state: q_right
-      mem_cache_value: b
-      tape_output: X
-      tape_displacement: R
+      mem_cache_value: b          # Almacena 'b' en mem_cache
+      tape_output: X              # Marca el símbolo como procesado
+      tape_displacement: R        # Mueve el cabezal a la derecha
 
+  # Si en q_start encuentra un 'X' o un espacio en blanco, acepta (todos los símbolos han sido procesados)
   - params:
       initial_state: q_start
       mem_cache_value:
@@ -48,7 +51,7 @@ delta:
       final_state: q_accept
       mem_cache_value:
       tape_output: X
-      tape_displacement: S
+      tape_displacement: S        # Mantiene el cabezal en su lugar
 
   - params:
       initial_state: q_start
@@ -58,8 +61,9 @@ delta:
       final_state: q_accept
       mem_cache_value:
       tape_output:
-      tape_displacement: S
+      tape_displacement: S        # Mantiene el cabezal en su lugar
 
+  # En q_right, mover a la derecha hasta el final de la cadena (espacio en blanco o 'X')
   - params:
       initial_state: q_right
       mem_cache_value: a
@@ -68,7 +72,7 @@ delta:
       final_state: q_right
       mem_cache_value: a
       tape_output: a
-      tape_displacement: R
+      tape_displacement: R        # Continúa moviéndose a la derecha
 
   - params:
       initial_state: q_right
@@ -78,8 +82,9 @@ delta:
       final_state: q_right
       mem_cache_value: a
       tape_output: b
-      tape_displacement: R
+      tape_displacement: R        # Continúa moviéndose a la derecha
 
+  # Al encontrar un 'X' o espacio en blanco en q_right, cambiar a q_left para comparar
   - params:
       initial_state: q_right
       mem_cache_value: a
@@ -88,7 +93,7 @@ delta:
       final_state: q_left
       mem_cache_value: a
       tape_output: X
-      tape_displacement: L
+      tape_displacement: L        # Mueve el cabezal a la izquierda
 
   - params:
       initial_state: q_right
@@ -98,8 +103,9 @@ delta:
       final_state: q_left
       mem_cache_value: a
       tape_output:
-      tape_displacement: L
+      tape_displacement: L        # Mueve el cabezal a la izquierda
 
+  # Transiciones similares para mem_cache_value 'b'
   - params:
       initial_state: q_right
       mem_cache_value: b
@@ -140,6 +146,7 @@ delta:
       tape_output:
       tape_displacement: L
 
+  # En q_left, comparar el símbolo actual con mem_cache_value
   - params:
       initial_state: q_left
       mem_cache_value: a
@@ -147,9 +154,10 @@ delta:
     output:
       final_state: q_check
       mem_cache_value:
-      tape_output: X
-      tape_displacement: L
+      tape_output: X              # Marca el símbolo como procesado
+      tape_displacement: L        # Mueve el cabezal a la izquierda
 
+  # Si los símbolos no coinciden, rechaza la cadena
   - params:
       initial_state: q_left
       mem_cache_value: a
@@ -158,8 +166,9 @@ delta:
       final_state: q_reject
       mem_cache_value:
       tape_output: b
-      tape_displacement: S
+      tape_displacement: S        # Mantiene el cabezal en su lugar
 
+  # Transiciones similares para mem_cache_value 'b'
   - params:
       initial_state: q_left
       mem_cache_value: b
@@ -180,6 +189,7 @@ delta:
       tape_output: a
       tape_displacement: S
 
+  # En q_check, mover a la izquierda hasta el siguiente símbolo sin marcar o el inicio
   - params:
       initial_state: q_check
       mem_cache_value:
@@ -188,7 +198,7 @@ delta:
       final_state: q_check
       mem_cache_value:
       tape_output: a
-      tape_displacement: L
+      tape_displacement: L        # Continúa moviéndose a la izquierda
 
   - params:
       initial_state: q_check
@@ -198,8 +208,9 @@ delta:
       final_state: q_check
       mem_cache_value:
       tape_output: b
-      tape_displacement: L
+      tape_displacement: L        # Continúa moviéndose a la izquierda
 
+  # Al encontrar un 'X' o espacio en blanco en q_check, regresar a q_start
   - params:
       initial_state: q_check
       mem_cache_value:
@@ -208,7 +219,7 @@ delta:
       final_state: q_start
       mem_cache_value:
       tape_output: X
-      tape_displacement: R
+      tape_displacement: R        # Mueve el cabezal a la derecha
 
   - params:
       initial_state: q_check
@@ -218,8 +229,9 @@ delta:
       final_state: q_start
       mem_cache_value:
       tape_output:
-      tape_displacement: R
+      tape_displacement: R        # Mueve el cabezal a la derecha
 
+  # Si en q_start encuentra espacio en blanco, acepta la cadena
   - params:
       initial_state: q_start
       mem_cache_value:
@@ -230,6 +242,7 @@ delta:
       tape_output:
       tape_displacement: S
 
+  # En q_reject, permanece en el estado de rechazo
   - params:
       initial_state: q_reject
       mem_cache_value:
@@ -244,4 +257,4 @@ simulation_strings:
   - abaaba
   - bababbabab
   - abaabaaba
-  - bababababa
+  - bababababa 
