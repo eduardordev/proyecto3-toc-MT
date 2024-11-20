@@ -1,79 +1,247 @@
 q_states:
   q_list:
-    - q0
-    - q1
-    - q2
-    - q3
+    - q_start
+    - q_check
+    - q_right
+    - q_left
     - q_accept
     - q_reject
-  initial: q0
-  final: q_accept
+  initial: q_start
+  final: [q_accept]
 
 alphabet:
-  - 'a'
-  - 'b'
+  - a
+  - b
 
 tape_alphabet:
-  - 'a'
-  - 'b'
-  - ''
+  - a
+  - b
+  - X
+  -
 
 delta:
-  # Transición desde q0 con 'a'
   - params:
-      initial_state: q0
-      mem_cache_value: ''
-      tape_input: 'a'
+      initial_state: q_start
+      mem_cache_value:
+      tape_input: a
     output:
-      final_state: q1
-      mem_cache_value: ''
-      tape_output: 'a'
-      tape_displacement: 'R'
-  # Transición desde q1 con 'b'
+      final_state: q_right
+      mem_cache_value: a
+      tape_output: X
+      tape_displacement: R
+
   - params:
-      initial_state: q1
-      mem_cache_value: ''
-      tape_input: 'b'
+      initial_state: q_start
+      mem_cache_value:
+      tape_input: b
     output:
-      final_state: q2
-      mem_cache_value: ''
-      tape_output: 'b'
-      tape_displacement: 'R'
-  # Transición desde q2 con 'b'
+      final_state: q_right
+      mem_cache_value: b
+      tape_output: X
+      tape_displacement: R
+
   - params:
-      initial_state: q2
-      mem_cache_value: ''
-      tape_input: 'b'
-    output:
-      final_state: q2
-      mem_cache_value: ''
-      tape_output: 'b'
-      tape_displacement: 'R'
-  # Transición desde q2 con 'a'
-  - params:
-      initial_state: q2
-      mem_cache_value: ''
-      tape_input: 'a'
-    output:
-      final_state: q3
-      mem_cache_value: ''
-      tape_output: 'a'
-      tape_displacement: 'R'
-  # Transición desde q3 con símbolo en blanco (fin de cinta)
-  - params:
-      initial_state: q3
-      mem_cache_value: ''
-      tape_input: ''
+      initial_state: q_start
+      mem_cache_value:
+      tape_input: X
     output:
       final_state: q_accept
-      mem_cache_value: ''
-      tape_output: ''
-      tape_displacement: 'S'
+      mem_cache_value:
+      tape_output: X
+      tape_displacement: S
+
+  - params:
+      initial_state: q_start
+      mem_cache_value:
+      tape_input:
+    output:
+      final_state: q_accept
+      mem_cache_value:
+      tape_output:
+      tape_displacement: S
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: a
+      tape_input: a
+    output:
+      final_state: q_right
+      mem_cache_value: a
+      tape_output: a
+      tape_displacement: R
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: a
+      tape_input: b
+    output:
+      final_state: q_right
+      mem_cache_value: a
+      tape_output: b
+      tape_displacement: R
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: a
+      tape_input: X
+    output:
+      final_state: q_left
+      mem_cache_value: a
+      tape_output: X
+      tape_displacement: L
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: a
+      tape_input:
+    output:
+      final_state: q_left
+      mem_cache_value: a
+      tape_output:
+      tape_displacement: L
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: b
+      tape_input: a
+    output:
+      final_state: q_right
+      mem_cache_value: b
+      tape_output: a
+      tape_displacement: R
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: b
+      tape_input: b
+    output:
+      final_state: q_right
+      mem_cache_value: b
+      tape_output: b
+      tape_displacement: R
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: b
+      tape_input: X
+    output:
+      final_state: q_left
+      mem_cache_value: b
+      tape_output: X
+      tape_displacement: L
+
+  - params:
+      initial_state: q_right
+      mem_cache_value: b
+      tape_input:
+    output:
+      final_state: q_left
+      mem_cache_value: b
+      tape_output:
+      tape_displacement: L
+
+  - params:
+      initial_state: q_left
+      mem_cache_value: a
+      tape_input: a
+    output:
+      final_state: q_check
+      mem_cache_value:
+      tape_output: X
+      tape_displacement: L
+
+  - params:
+      initial_state: q_left
+      mem_cache_value: a
+      tape_input: b
+    output:
+      final_state: q_reject
+      mem_cache_value:
+      tape_output: b
+      tape_displacement: S
+
+  - params:
+      initial_state: q_left
+      mem_cache_value: b
+      tape_input: b
+    output:
+      final_state: q_check
+      mem_cache_value:
+      tape_output: X
+      tape_displacement: L
+
+  - params:
+      initial_state: q_left
+      mem_cache_value: b
+      tape_input: a
+    output:
+      final_state: q_reject
+      mem_cache_value:
+      tape_output: a
+      tape_displacement: S
+
+  - params:
+      initial_state: q_check
+      mem_cache_value:
+      tape_input: a
+    output:
+      final_state: q_check
+      mem_cache_value:
+      tape_output: a
+      tape_displacement: L
+
+  - params:
+      initial_state: q_check
+      mem_cache_value:
+      tape_input: b
+    output:
+      final_state: q_check
+      mem_cache_value:
+      tape_output: b
+      tape_displacement: L
+
+  - params:
+      initial_state: q_check
+      mem_cache_value:
+      tape_input: X
+    output:
+      final_state: q_start
+      mem_cache_value:
+      tape_output: X
+      tape_displacement: R
+
+  - params:
+      initial_state: q_check
+      mem_cache_value:
+      tape_input:
+    output:
+      final_state: q_start
+      mem_cache_value:
+      tape_output:
+      tape_displacement: R
+
+  - params:
+      initial_state: q_start
+      mem_cache_value:
+      tape_input:
+    output:
+      final_state: q_accept
+      mem_cache_value:
+      tape_output:
+      tape_displacement: S
+
+  - params:
+      initial_state: q_reject
+      mem_cache_value:
+      tape_input:
+    output:
+      final_state: q_reject
+      mem_cache_value:
+      tape_output:
+      tape_displacement: S
 
 simulation_strings:
-  - 'abbba'
-  - 'abbbba'
-  - 'aaba'
-  - 'abba'
-  - 'aabcaa'
-  - 'abbbaa'
+  - abaaba
+  - bababbabab
+  - abaabaaba
+  - bababababa

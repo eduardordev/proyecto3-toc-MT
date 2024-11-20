@@ -18,7 +18,6 @@ tape_alphabet:
   - ''
 
 delta:
-  # Transición para cambiar 'a' por '1'
   - params:
       initial_state: q0
       mem_cache_value: ''
@@ -28,7 +27,6 @@ delta:
       mem_cache_value: ''
       tape_output: '1'
       tape_displacement: 'R'
-  # Transición para cambiar 'b' por '0'
   - params:
       initial_state: q0
       mem_cache_value: ''
@@ -38,7 +36,6 @@ delta:
       mem_cache_value: ''
       tape_output: '0'
       tape_displacement: 'R'
-  # Transición para símbolo en blanco (fin de cinta)
   - params:
       initial_state: q0
       mem_cache_value: ''
@@ -50,7 +47,7 @@ delta:
       tape_displacement: 'S'
 
 simulation_strings:
-  - 'aabba'
-  - 'abbab'
-  - 'baaab'
-  - 'bbaaa'
+  - 'aabbaaabba'
+  - 'abbaaabbab'
+  - 'baabbaaaab'
+  - 'bbabaaabaa'
